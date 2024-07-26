@@ -1,3 +1,4 @@
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 # Project JUno
 ![alt text](https://github.com/sdgondola/Project-JUno/blob/main/Screenshot.png?raw=true)
 This is my version of JUno, the project for the "Metodologie di Programmazione" course (programming methodology) at [Sapienza University of Rome](https://www.studiareinformatica.uniroma1.it/).  
