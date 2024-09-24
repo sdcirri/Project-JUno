@@ -83,6 +83,7 @@ public class Frame extends JFrame implements Observer {
 
 		add(currentPanel, BorderLayout.CENTER);
 		setVisible(true);
+		System.gc();
 	}
 
 	@Override

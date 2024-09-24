@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,26 +49,43 @@ public class PlayerProfile implements Serializable {
 	}
 
 	/**
+	 * Detects the OS and returns the most appropriate
+	 * save path for player data
+	 * @return path where to save
+	 */
+	private static Path getOSSavePath() {
+		String osString = System.getProperty("os.name").toLowerCase(),
+				homePath = System.getProperty("user.home");
+		if (osString.contains("nix") || osString.contains("aix") || osString.contains("nux")){
+		    return Paths.get(homePath + "/.local/share/juno/");			// home will be /home/user
+		}
+		else if (osString.contains("osx")) {
+			return Paths.get(homePath + "/Application Support/JUNO/");	// home will be /Users/user
+		} else if (osString.contains("win")) {
+			return Paths.get(System.getenv("APPDATA") + "\\juno\\");	// Will save under AppData/Roaming
+		}
+		else return Paths.get(".");
+	}
+
+	/**
 	 * Saves the profile to a file
 	 * @param filename file where to save
+	 * @throws IOException when it's somehow impossible to access the save path
 	 */
-	public void saveToFile(String filename) {
-		try {
-			File outFile = new File(filename);
-			outFile.createNewFile();
-			FileOutputStream out = new FileOutputStream(outFile);
-			ObjectOutputStream objo = new ObjectOutputStream(out);
-			System.out.println("Saving profile with username " + username);
-			objo.writeObject(username);
-			objo.writeObject(level);
-			objo.writeObject(xp);
-			objo.writeObject(avatar);
-			objo.writeObject(gameHistory);
-			objo.close();
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
+	public void saveToFile(String filename) throws IOException {
+		Path savePath = getOSSavePath(), fullpath = savePath.resolve(filename);
+		Files.createDirectories(savePath);
+		File outFile = new File(fullpath.toString());
+		outFile.createNewFile();
+		FileOutputStream out = new FileOutputStream(outFile);
+		ObjectOutputStream objo = new ObjectOutputStream(out);
+		System.out.println("Saving profile with username " + username + " at " + fullpath);
+		objo.writeObject(username);
+		objo.writeObject(level);
+		objo.writeObject(xp);
+		objo.writeObject(avatar);
+		objo.writeObject(gameHistory);
+		objo.close();
 	}
 
 	/**
@@ -77,13 +97,14 @@ public class PlayerProfile implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public static PlayerProfile restoreFromFile(String filename) throws FileNotFoundException {
+		Path fullpath = getOSSavePath().resolve(filename);
 		String username = null;
 		Avatar avatar = null;
 		int level = 0, xp = 0;
 		List<GameRecord> gameHistory = null;
 
 		try {
-			File inFile = new File(filename);
+			File inFile = new File(fullpath.toString());
 			FileInputStream in = new FileInputStream(inFile);
 			ObjectInputStream obji = new ObjectInputStream(in);
 
@@ -96,9 +117,10 @@ public class PlayerProfile implements Serializable {
 			obji.close();
 		}
 		catch (FileNotFoundException e) {
-			throw new FileNotFoundException();
+			throw e;
 		}
 		catch(IOException | ClassNotFoundException e) {
+			System.err.println("An error occured while trying to restore the user profile:");
 			e.printStackTrace();
 			return null;
 		}

@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -47,7 +48,13 @@ public class AvatarPicker extends NavigationPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				pp.setAvatar(a);
-				pp.saveToFile("player.ser");
+				try {
+					pp.saveToFile("player.ser");
+				}
+				catch (IOException ex) {
+					// We really do not expect this as it's handled previously
+					ex.printStackTrace();
+				}
 				nav.changeMenu(Panel.PROFILE);
 			}
 		});

@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -75,7 +76,12 @@ public class ProfileEditor extends NavigationPanel {
 			public void actionPerformed(ActionEvent e) {
 				String newname = textField_username.getText();
 				pp.setUsername(newname);
-				pp.saveToFile("player.ser");
+				try {
+					pp.saveToFile("player.ser");
+				} catch (IOException ex) {
+					// We really do not expect this as it's handled previously
+					ex.printStackTrace();
+				}
 				nav.changeMenu(Panel.MAINMENU);
 			}
 		});

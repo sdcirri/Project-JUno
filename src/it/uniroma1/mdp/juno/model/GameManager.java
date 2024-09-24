@@ -1,5 +1,6 @@
 package it.uniroma1.mdp.juno.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,6 +108,7 @@ public class GameManager extends Observable implements Observer {
 	 */
 	public void stop() {
 		running = false;
+		System.gc();
 	}
 
 	/**
@@ -387,7 +389,12 @@ public class GameManager extends Observable implements Observer {
 			notifyObservers(PLAY_WIN);
 		}
 
-		players[PLAYER_HUMAN].getProfile().saveToFile("player.ser");
+		try {
+			players[PLAYER_HUMAN].getProfile().saveToFile("player.ser");
+		} catch (IOException e) {
+			System.err.println("An error occured while trying to save user data:");
+			e.printStackTrace();
+		}
 	}
 
 	/**

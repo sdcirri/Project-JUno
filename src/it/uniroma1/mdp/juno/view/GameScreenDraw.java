@@ -380,7 +380,8 @@ public class GameScreenDraw extends JPanel implements Observer {
 						try {
 							game.play();
 							lastPlayer = game.getCurrentPlayer();
-						} catch (PlayerNotReadyException e1) {
+						}
+						catch (PlayerNotReadyException e1) {
 							// TODO: sound feedback
 						}
 					}

@@ -1,6 +1,7 @@
 package it.uniroma1.mdp.juno.controller;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import it.uniroma1.mdp.juno.model.GameManager;
 import it.uniroma1.mdp.juno.model.PlayerProfile;
@@ -23,8 +24,16 @@ public class JUno {
 			profile = PlayerProfile.restoreFromFile("player.ser");
 		}
 		catch (FileNotFoundException e) {
-			System.err.println("Warning! No player profile save found, creating new profile");
+			System.err.println("No player profile save found, creating new profile");
 			profile = new PlayerProfile("Player");
+			try {
+				profile.saveToFile("player.ser");
+			}
+			catch (IOException e2) {
+				System.err.println("Couldn't save player profile:");
+				e2.printStackTrace();
+				System.exit(1);
+			}
 		}
 
 		GameManager gm = GameManager.getInstance();

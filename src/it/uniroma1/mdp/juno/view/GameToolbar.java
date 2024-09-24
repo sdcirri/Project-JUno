@@ -40,7 +40,6 @@ public class GameToolbar extends NavigationPanel {
 		button_newgame.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Resetting the game");
 				gameReset.reset(true);
 			}
 		});
